@@ -1,3 +1,22 @@
+import { execSync } from "child_process";
+import fs from "fs";
+
+// Check if node_modules exists, else run npm install
+function ensureDependencies() {
+  if (!fs.existsSync("node_modules")) {
+    console.log("node_modules not found, running npm install...");
+    try {
+      execSync("npm install", { stdio: "inherit" });
+      console.log("npm install completed successfully.");
+    } catch (e) {
+      console.error("npm install failed:", e);
+      process.exit(1);
+    }
+  }
+}
+
+ensureDependencies();
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -110,6 +129,6 @@ server.tool(
   }
 );
 
-// Connect MCP server to stdio
+// Connect MCP server to stdio transport
 const transport = new StdioServerTransport();
 await server.connect(transport);
